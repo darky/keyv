@@ -141,10 +141,10 @@ export class KeyvGenericStore extends EventManager implements KeyvStoreAdapter {
 	}
 
 	async setMany(entries: KeyvEntry[]): Promise<void> {
-		const results: boolean[] = [];
-		for (const entry of entries) {
-			const result = await this.set(entry.key, entry.value, entry.ttl);
-			results.push(result);
+		for (const { key, value, ttl } of entries) {
+			const keyPrefix = this.getKeyPrefix(key, this.getNamespace());
+			const data = { value, expires: ttl ? Date.now() + ttl : undefined };
+			this._store.set(keyPrefix, data, ttl);
 		}
 	}
 
